@@ -1,12 +1,36 @@
-let selectedVideo = document.getElementById('video1');
-const videos = [
-    document.getElementById('video1'),
-    document.getElementById('video2'),
-    document.getElementById('video3'),
-    document.getElementById('video4')
-];
+let selectedVideo = null;
+let videos = [];
 
 const volumeControl = document.getElementById('volume-control');
+const timeline = document.getElementById('timeline3');
+
+function importVideos() {
+    const input = document.getElementById('video-import');
+    const files = input.files;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const videoURL = URL.createObjectURL(file);
+        addVideo(videoURL);
+    }
+}
+
+function addVideo(videoURL) {
+    const video = document.createElement('video');
+    video.src = videoURL;
+    video.preload = 'auto';
+
+    const videoContainer = document.createElement('div');
+    videoContainer.className = 'video-container unfocused';
+    videoContainer.appendChild(video);
+
+    videoContainer.addEventListener('click', () => updateFocus(video));
+
+    updateFocus(video);
+
+    videos.push(video);
+    initializeVideo(video, timeline);
+}
 
 function togglePlay() {
     const allPaused = videos.every(video => video.paused);
@@ -26,35 +50,20 @@ function updateTimeline(video, timeline) {
 }
 
 function initializeVideo(video, timeline) {
-    timeline.max = video.duration;
+    video.addEventListener('loadedmetadata', () => {
+        timeline.max = video.duration;
+    });
     video.addEventListener('timeupdate', () => updateTimeline(video, timeline));
 }
 
-function resetVolumes(){
+function resetVolumes() {
     videos.forEach(video => video.volume = 0);
 }
-
-videos.forEach((video, index) => {
-    video.addEventListener('click', (event) => {
-        const volume = selectedVideo.volume;
-        resetVolumes();
-        selectedVideo = video;
-        selectedVideo.volume = volume;
-        console.log(volumeControl);
-        updateFocus(video);
-
-    });
-});
-
-volumeControl.addEventListener('input', (event) => {
-    selectedVideo.volume = parseFloat(event.target.value);
-});
 
 function updateFocus(clickedVideo) {
     const focusedVideoContainer = document.querySelector('.focused-video');
     const unfocusedVideosContainer = document.querySelector('.unfocused-videos');
 
-    // First, move all videos to unfocused container
     videos.forEach(video => {
         const videoContainer = video.closest('.video-container') || video.parentElement;
         if (videoContainer.parentElement !== unfocusedVideosContainer) {
@@ -64,16 +73,41 @@ function updateFocus(clickedVideo) {
         videoContainer.classList.add('unfocused');
     });
 
-    // Then, move the clicked video to focused container
     const clickedVideoContainer = clickedVideo.closest('.video-container') || clickedVideo.parentElement;
     focusedVideoContainer.innerHTML = '';
     focusedVideoContainer.appendChild(clickedVideoContainer);
     clickedVideoContainer.classList.remove('unfocused');
     clickedVideoContainer.classList.add('focused');
+
+    const volume = selectedVideo ? selectedVideo.volume : 0.5;
+    resetVolumes();
+    selectedVideo = clickedVideo;
+    selectedVideo.volume = volume;
+    volumeControl.value = volume;
 }
 
+volumeControl.addEventListener('input', (event) => {
+    if (selectedVideo) {
+        selectedVideo.volume = parseFloat(event.target.value);
+    }
+});
 
-video1.volume = 0;
-video2.volume = 0;
-video3.volume = 0;
-video4.volume = 0;
+timeline.addEventListener('input', function() {
+    if (selectedVideo) {
+        selectedVideo.currentTime = (this.value / this.max) * selectedVideo.duration;
+    }
+});
+
+window.addEventListener('keydown', function(event) {
+    if (event.code === 'Space') {
+        event.preventDefault();
+        togglePlay();
+    } else if (event.code === 'ArrowRight') {
+        event.preventDefault();
+        goForward();
+    } else if (event.code === 'ArrowLeft') {
+        event.preventDefault();
+        goBack();
+    }
+});
+  

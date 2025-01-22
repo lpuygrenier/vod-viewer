@@ -7,6 +7,7 @@ body {
     display: flex;
     flex-direction:column;
     gap: 8px;
+    padding: 16px;
 }
 .video-layout {
     display: flex;
@@ -41,21 +42,39 @@ video {
     height: 32px;
 }
 
-input[type="range"] {
-    width: 100%;
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-}
-
 .custom-controls {
-    gap: 10px;
-    align-items: center;
+    border-radius: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 16px;
+    background-color: #181d27;
+
+    width: 30rem;
+    max-width: 50%;
+
+    position: absolute;
+    bottom: 16px;
 }
 
 .flex-column {
     display: flex;
     flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.center {
+    align-items: center;
+    justify-content: center;
+}
+.play-controls {
+    gap: 8px;
+}
+button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }

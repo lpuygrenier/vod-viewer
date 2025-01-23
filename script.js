@@ -1,6 +1,7 @@
 let selectedVideo = null;
 let videos = [];
 let isLoading = false;
+let videoCount = 0;
 
 const volumeControl = document.getElementById('volume-control');
 const timeline = document.getElementById('timeline3');
@@ -38,7 +39,14 @@ function addVideo(videoURL) {
 
     const videoContainer = document.createElement('div');
     videoContainer.className = 'video-container unfocused';
+    videoContainer.style.position = 'relative';
     videoContainer.appendChild(video);
+
+    const numberLabel = document.createElement('div');
+    numberLabel.className = 'video-number';
+    numberLabel.textContent = videoCount;
+    videoContainer.appendChild(numberLabel);
+    videoCount++;
 
     videoContainer.addEventListener('click', () => updateFocus(video));
 
@@ -84,15 +92,10 @@ function goForward() {
     videos.forEach(video => video.currentTime = newTime);
 }
 
-function updateTimeline(video, timeline) {
-    timeline.value = video.currentTime;
-}
-
 function initializeVideo(video, timeline) {
     video.addEventListener('loadedmetadata', () => {
         timeline.max = video.duration;
     });
-    video.addEventListener('timeupdate', () => updateTimeline(video, timeline));
 }
 
 function resetVolumes() {
@@ -100,6 +103,17 @@ function resetVolumes() {
 }
 
 function updateFocus(clickedVideo) {
+    if (typeof clickedVideo === 'number') {
+        const videoToFocus = videos.find((video, index) => 
+            video.closest('.video-container').querySelector('.video-number').textContent == clickedVideo
+        );
+        if (videoToFocus) {
+            clickedVideo = videoToFocus;
+        } else {
+            return;
+        }
+    }
+
     const focusedVideoContainer = document.querySelector('.focused-video');
     const unfocusedVideosContainer = document.querySelector('.unfocused-videos');
 
@@ -147,6 +161,12 @@ window.addEventListener('keydown', function(event) {
     } else if (event.code === 'ArrowLeft') {
         event.preventDefault();
         goBack();
+    } else if (event.code.startsWith('Digit') || event.code.startsWith('Numpad')) {
+        const digit = parseInt(event.key);
+        if (digit >= 0 && digit <= 9) {
+            event.preventDefault();
+            updateFocus(digit);
+        }
     }
 });
   

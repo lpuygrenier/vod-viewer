@@ -2,9 +2,8 @@ let selectedVideo = null;
 let videos = [];
 let isLoading = false;
 let videoCount = 0;
-
 const volumeControl = document.getElementById('volume-control');
-const timeline = document.getElementById('timeline3');
+const timeline = document.getElementById('timeline');
 
 function removeHUDWelcome() {
     const videoLayout = document.querySelector('.video-layout');
@@ -15,7 +14,6 @@ function removeHUDWelcome() {
 
     const customControls = document.querySelector('.custom-controls');
     customControls.classList.add('hide-arrows');
-
 }
 
 function importVideos() {
@@ -29,7 +27,6 @@ function importVideos() {
     }
 
     removeHUDWelcome();
-
 }
 
 function addVideo(videoURL) {

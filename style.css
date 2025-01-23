@@ -53,6 +53,7 @@ video {
     max-width: 50%;
 
     position: absolute;
+    left: 16px;
     bottom: 16px;
 }
 

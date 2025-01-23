@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Player with Custom Controls</title>
+    <title>VOD Viewer</title>
     <!DOCTYPE html>
     <html lang="en" data-theme="dark">
     <head>
@@ -12,13 +12,12 @@
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="pico.slate.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-        <title>SCRIM Viewer with Grid Layout</title>
     </head>
     <body>
         <div class="container">
             <h1>VOD Viewer</h1>
             <div class="welcome-layout">
-                <p>Import a video to start watching</p>
+                <p>Import a video to start watching !</p>
             </div>
             <div class="video-layout hide">
                 <div class="focused-video">
@@ -31,8 +30,9 @@
 
         <div class="custom-controls">
             <div class="flex-column">
+                <h4>Controls</h4>
                 <div class="timeline-container">
-                    <input id="timeline3" type="range" min="0" max="100" value="0" step="0.1" style="width: 100%;">
+                    <input id="timeline" type="range" min="0" max="100" value="0" step="0.1" style="width: 100%;">
                 </div>
                 <div class="play-controls flex-row center">    
                     <button onclick="goBack()"><span class="material-symbols-outlined">fast_rewind</span>10s</button>

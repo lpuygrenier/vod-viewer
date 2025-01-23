@@ -1,5 +1,6 @@
 let selectedVideo = null;
 let videos = [];
+let isLoading = false;
 
 const volumeControl = document.getElementById('volume-control');
 const timeline = document.getElementById('timeline3');
@@ -45,6 +46,23 @@ function addVideo(videoURL) {
 
     videos.push(video);
     initializeVideo(video, timeline);
+
+    video.addEventListener('loadstart', () => {
+        isLoading = true;
+        pauseOtherVideos(video);
+    });
+
+    video.addEventListener('canplay', () => {
+        isLoading = false;
+    });
+}
+
+function pauseOtherVideos(currentVideo) {
+    videos.forEach(video => {
+        if (video !== currentVideo) {
+            video.pause();
+        }
+    });
 }
 
 function togglePlay() {
@@ -52,12 +70,18 @@ function togglePlay() {
     videos.forEach(video => allPaused ? video.play() : video.pause());
 }
 
+
 function goBack() {
-    videos.forEach(video => video.currentTime = Math.max(video.currentTime - 10, 0));
+    const minTime = Math.min(...videos.map(video => video.currentTime));
+    const newTime = Math.max(minTime - 10, 0);
+    videos.forEach(video => video.currentTime = newTime);
 }
 
 function goForward() {
-    videos.forEach(video => video.currentTime = Math.min(video.currentTime + 10, video.duration));
+    const maxTime = Math.max(...videos.map(video => video.currentTime));
+    const minDuration = Math.min(...videos.map(video => video.duration));
+    const newTime = Math.min(maxTime + 10, minDuration);
+    videos.forEach(video => video.currentTime = newTime);
 }
 
 function updateTimeline(video, timeline) {

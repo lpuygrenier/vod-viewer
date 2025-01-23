@@ -4,6 +4,18 @@ let videos = [];
 const volumeControl = document.getElementById('volume-control');
 const timeline = document.getElementById('timeline3');
 
+function removeHUDWelcome() {
+    const videoLayout = document.querySelector('.video-layout');
+    videoLayout.classList.remove('hide');
+
+    const welcomeLayout = document.querySelector('.welcome-layout');
+    welcomeLayout.classList.add('hide');
+
+    const customControls = document.querySelector('.custom-controls');
+    customControls.classList.add('hide-arrows');
+
+}
+
 function importVideos() {
     const input = document.getElementById('video-import');
     const files = input.files;
@@ -13,6 +25,9 @@ function importVideos() {
         const videoURL = URL.createObjectURL(file);
         addVideo(videoURL);
     }
+
+    removeHUDWelcome();
+
 }
 
 function addVideo(videoURL) {

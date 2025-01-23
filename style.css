@@ -70,11 +70,53 @@ video {
     align-items: center;
     justify-content: center;
 }
+
 .play-controls {
     gap: 8px;
 }
+
 button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+input #volume-control {
+    width: 100px; 
+    vertical-align: middle;
+    margin-bottom: 0 !important;
+}
+
+.hide {
+    display: none;
+}
+
+.custom-controls:before {
+    content: " ";
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: 19px;
+    right: -80px;
+    border: 5px solid white;
+    border-top: 100px solid white;
+    transform: rotate(260deg);
+}
+
+.custom-controls:after {
+    content: " ";
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: 45px;
+    right: -30px;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 30px solid white;
+    transform: rotate(260deg);
+}
+
+.hide-arrows:before,
+.hide-arrows:after {
+    display: none !important;
 }

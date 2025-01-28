@@ -30,6 +30,7 @@ function addVideo(videoURL) {
     const video = document.createElement('video');
     video.src = videoURL;
     video.preload = 'auto';
+    video.controls = true;
 
     const videoContainer = document.createElement('div');
     videoContainer.className = 'video-container unfocused';
@@ -42,7 +43,11 @@ function addVideo(videoURL) {
     videoContainer.appendChild(numberLabel);
     videoCount++;
 
-    videoContainer.addEventListener('click', () => updateFocus(video));
+    // videoContainer.addEventListener('click', () => {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //     updateFocus(video);
+    // });
 
     updateFocus(video);
 
@@ -73,16 +78,16 @@ function togglePlay() {
 }
 
 
-function goBack() {
+function goBack(seconds) {
     const minTime = Math.min(...videos.map(video => video.currentTime));
-    const newTime = Math.max(minTime - 10, 0);
+    const newTime = Math.max(minTime - seconds, 0);
     videos.forEach(video => video.currentTime = newTime);
 }
 
-function goForward() {
+function goForward(seconds) {
     const maxTime = Math.max(...videos.map(video => video.currentTime));
     const minDuration = Math.min(...videos.map(video => video.duration));
-    const newTime = Math.min(maxTime + 10, minDuration);
+    const newTime = Math.min(maxTime + seconds, minDuration);
     videos.forEach(video => video.currentTime = newTime);
 }
 
@@ -151,10 +156,10 @@ window.addEventListener('keydown', function(event) {
         togglePlay();
     } else if (event.code === 'ArrowRight') {
         event.preventDefault();
-        goForward();
+        goForward(10);
     } else if (event.code === 'ArrowLeft') {
         event.preventDefault();
-        goBack();
+        goBack(10);
     } else if (event.code.startsWith('Digit') || event.code.startsWith('Numpad')) {
         const digit = parseInt(event.key);
         if (digit >= 0 && digit <= 9) {

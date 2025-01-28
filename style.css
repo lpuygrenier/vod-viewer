@@ -92,36 +92,6 @@ input #volume-control {
     display: none;
 }
 
-.custom-controls:before {
-    content: " ";
-    position: absolute;
-    width: 0;
-    height: 0;
-    bottom: 19px;
-    right: -80px;
-    border: 5px solid white;
-    border-top: 100px solid white;
-    transform: rotate(260deg);
-}
-
-.custom-controls:after {
-    content: " ";
-    position: absolute;
-    width: 0;
-    height: 0;
-    bottom: 45px;
-    right: -30px;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 30px solid white;
-    transform: rotate(260deg);
-}
-
-.hide-arrows:before,
-.hide-arrows:after {
-    display: none !important;
-}
-
 .video-number {
     position: absolute;
     top: 10px;
@@ -133,4 +103,9 @@ input #volume-control {
     font-size: 14px;
     z-index: 10;
   }
-  
+
+button.control {
+    border-radius: 100px;
+    padding: calc(var(--pico-form-element-spacing-vertical) / 2) calc(var(--pico-form-element-spacing-horizontal) / 2);
+    aspect-ratio: 1 / 1;
+}

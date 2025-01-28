@@ -11,9 +11,6 @@ function removeHUDWelcome() {
 
     const welcomeLayout = document.querySelector('.welcome-layout');
     welcomeLayout.classList.add('hide');
-
-    const customControls = document.querySelector('.custom-controls');
-    customControls.classList.add('hide-arrows');
 }
 
 function importVideos() {

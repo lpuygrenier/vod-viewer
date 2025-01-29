@@ -5,27 +5,6 @@ let videoCount = 0;
 const volumeControl = document.getElementById('volume-control');
 const timeline = document.getElementById('timeline');
 
-function removeHUDWelcome() {
-    const videoLayout = document.querySelector('.video-layout');
-    videoLayout.classList.remove('hide');
-
-    const welcomeLayout = document.querySelector('.welcome-layout');
-    welcomeLayout.classList.add('hide');
-}
-
-function importVideos() {
-    const input = document.getElementById('video-import');
-    const files = input.files;
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const videoURL = URL.createObjectURL(file);
-        addVideo(videoURL);
-    }
-
-    removeHUDWelcome();
-}
-
 function addVideo(videoURL) {
     const video = document.createElement('video');
     video.src = videoURL;
@@ -62,6 +41,15 @@ function addVideo(videoURL) {
     video.addEventListener('canplay', () => {
         isLoading = false;
     });
+
+    const focusedVideosContainer = document.querySelector('.focused-video');
+    if (focusedVideosContainer) {
+        focusedVideosContainer.appendChild(videoContainer);
+        document.querySelector('.video-layout').classList.remove('hide');
+        document.querySelector('.welcome-layout').classList.add('hide');
+    } else {
+        console.error('Unfocused videos container not found');
+    }   
 }
 
 function pauseOtherVideos(currentVideo) {
@@ -144,12 +132,6 @@ volumeControl.addEventListener('input', (event) => {
     }
 });
 
-timeline.addEventListener('input', function() {
-    if (selectedVideo) {
-        selectedVideo.currentTime = (this.value / this.max) * selectedVideo.duration;
-    }
-});
-
 window.addEventListener('keydown', function(event) {
     if (event.code === 'Space') {
         event.preventDefault();
@@ -168,4 +150,116 @@ window.addEventListener('keydown', function(event) {
         }
     }
 });
+
+const progressBar = document.createElement('progress');
+progressBar.max = 100;
+document.getElementById('uploadProgress').appendChild(progressBar);
+const uploadProgress = document.getElementById('uploadProgress')
+
+function showProgressBar() {
+    uploadProgress.classList.remove('hide');
+}
+  
+function hideProgressBar() {
+    uploadProgress.classList.add('hide');
+}
+
+function toggleRowSelection(row) {
+    console.log('hello');
+    row.classList.toggle('selected');
+}
+
+
+
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/upload', true);
+    showProgressBar();
+    
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            const percentComplete = (e.loaded / e.total) * 100;
+            progressBar.value = percentComplete;
+            progressBar.textContent = `${percentComplete.toFixed(2)}%`;
+        }
+    };
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            document.getElementById('uploadMessage').textContent = 'File uploaded successfully';
+            updateFileList();
+        } else {
+            document.getElementById('uploadMessage').textContent = 'Error uploading file';
+        }
+        hideProgressBar();
+    };
+    
+    xhr.send(formData);
+});
+
+function updateFileList() {
+    fetch('/uploads')
+        .then(response => response.json())
+        .then(files => {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            files.forEach(file => {
+                if (file.name !== '.gitkeep') {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${file.name}</td>
+                        <td>
+                            <button onclick="reviewVideo('${file.url}')">Review</button>
+                            <button onclick="downloadFile('${file.url}', '${file.name}')">Download</button>
+                        </td>
+                    `;
+                    tr.addEventListener('click', function(event) {
+                        if (event.target.tagName !== 'BUTTON') {
+                            toggleRowSelection(this);
+                        }
+                    });
+                    fileList.appendChild(tr);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching file list:', error);
+        });
+}
+
+function reviewVideo(videoURL) {
+    fetch(videoURL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const objectURL = URL.createObjectURL(blob);
+            addVideo(objectURL);
+        })
+        .catch(error => {
+            console.error('Error fetching video:', error);
+        });
+}
+
+
+function downloadFile(url, fileName) {
+    fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        })
+        .catch(error => {
+            console.error('Error downloading file:', error);
+        });
+}
+
   

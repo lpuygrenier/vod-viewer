@@ -22,8 +22,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -50,6 +48,26 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
   res.json({ message: 'File uploaded successfully' });
 });
+
+app.get('/uploads', (req, res) => {
+  const uploadDir = path.join(__dirname, 'uploads');
+  fs.readdir(uploadDir, (err, files) => {
+    if (err) {
+      console.error('Error reading upload directory:', err);
+      return res.status(500).json({ message: 'Error retrieving files' });
+    }
+    
+    const fileList = files.map(file => ({
+      name: file,
+      url: `/uploads/${file}`
+    }));
+    
+    res.json(fileList);
+  });
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}...`);

@@ -3,6 +3,9 @@ body {
     padding: 0;
     box-sizing: border-box;
 }
+a  {
+    cursor:pointer;
+}
 .container {
     display: flex;
     flex-direction:column;
@@ -108,4 +111,7 @@ button.control {
     border-radius: 100px;
     padding: calc(var(--pico-form-element-spacing-vertical) / 2) calc(var(--pico-form-element-spacing-horizontal) / 2);
     aspect-ratio: 1 / 1;
+}
+#fileList.selected{
+    background: red;
 }

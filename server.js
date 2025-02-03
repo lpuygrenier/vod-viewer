@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const cliProgress = require('cli-progress');
+const ffmpeg = require('fluent-ffmpeg');
 
 const app = express();
 const port = 8000;
@@ -20,10 +21,17 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const allowedExtensions = ['.mp4', '.mkv'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowedExtensions.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only MP4 and MKV files are allowed.'));
+    }
+  }
 });
 
 app.post('/upload', upload.single('file'), (req, res) => {
@@ -31,22 +39,42 @@ app.post('/upload', upload.single('file'), (req, res) => {
     return res.status(400).json({ message: 'No file was uploaded' });
   }
 
-  const fileSize = req.file.size;
-  const fileName = req.file.originalname;
-
+  const inputPath = req.file.path;
+  const outputPath = path.join(__dirname, 'uploads', `compressed_${req.file.originalname}`);
   const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-  progressBar.start(fileSize, 0);
 
-  const updateInterval = setInterval(() => {
-    const progress = Math.min(progressBar.value + 8192, fileSize);
-    progressBar.update(progress);
-    if (progress >= fileSize) {
-      clearInterval(updateInterval);
+  progressBar.start(100, 0);
+  
+  ffmpeg(inputPath)
+    .videoCodec('libx264')
+    .outputOptions('-crf', '28') // Lower CRF for higher quality, higher for smaller size
+    .on('progress', (progress) => {
+      progressBar.update(Math.min(Math.round(progress.percent), 100));
+    })
+    .on('end', () => {
       progressBar.stop();
-    }
-  }, 10);
+      fs.unlink(inputPath, (err) => { // Delete original file
+        if (err) console.error('Error deleting original:', err);
+        fs.rename(outputPath, inputPath, (err) => { // Replace with compressed version
+          if (err) console.error('Error renaming compressed file:', err);
+          res.json({ 
+            message: 'File compressed and saved successfully',
+            originalSize: req.file.size,
+            compressedSize: fs.statSync(inputPath).size
+          });
+        });
+      });
+    })
+    .on('error', (err) => {
+      progressBar.stop();
+      console.error('Compression error:', err);
+      res.status(500).json({ message: 'Compression failed' });
+    })
+    .save(outputPath);
+});
 
-  res.json({ message: 'File uploaded successfully' });
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/uploads', (req, res) => {

@@ -43,12 +43,6 @@ function addVideo(videoURL) {
     videoContainer.appendChild(numberLabel);
     videoCount++;
 
-    // videoContainer.addEventListener('click', () => {
-    //     e.preventDefault();
-    //     e.stopPropagation();
-    //     updateFocus(video);
-    // });
-
     updateFocus(video);
 
     videos.push(video);
@@ -79,16 +73,11 @@ function togglePlay() {
 
 
 function goBack(seconds) {
-    const minTime = Math.min(...videos.map(video => video.currentTime));
-    const newTime = Math.max(minTime - seconds, 0);
-    videos.forEach(video => video.currentTime = newTime);
+    videos.forEach(video => video.currentTime = video.currentTime - seconds);
 }
 
 function goForward(seconds) {
-    const maxTime = Math.max(...videos.map(video => video.currentTime));
-    const minDuration = Math.min(...videos.map(video => video.duration));
-    const newTime = Math.min(maxTime + seconds, minDuration);
-    videos.forEach(video => video.currentTime = newTime);
+    videos.forEach(video => video.currentTime = video.currentTime + seconds);
 }
 
 function initializeVideo(video, timeline) {

@@ -221,12 +221,6 @@ volumeControl.addEventListener('input', (event) => {
     }
 });
 
-// timeline.addEventListener('input', function() {
-//     if (selectedVideo) {
-//         selectedVideo.currentTime = (this.value / this.max) * selectedVideo.duration;
-//     }
-// });
-
 function toggleZoom () {
     const container = document.querySelector('.focused');
     const video = container.querySelector('video');
@@ -248,12 +242,9 @@ function resetZoom () {
             video.style.transform = `scale(1)`;
         }
     }
-
 }
 
 window.addEventListener('keydown', function(event) {
-    console.log(event.code + " pressed");
-
     if (event.code === 'Space') {
         event.preventDefault();
         togglePlay();

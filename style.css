@@ -28,11 +28,8 @@ body {
     gap: 8px;
 }
 
-.video-container {
+.video-wrapper {
     height: 100%;
-}
-
-.video-container {
     position: relative;
     width: 100%;
     overflow: hidden;

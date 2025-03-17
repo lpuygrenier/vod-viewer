@@ -120,15 +120,15 @@ function addVideo(videoURL) {
     video.preload = 'auto';
     video.controls = true;
 
-    const videoContainer = document.createElement('div');
-    videoContainer.className = 'video-container unfocused';
-    videoContainer.style.position = 'relative';
-    videoContainer.appendChild(video);
+    const videoWrapper = document.createElement('div');
+    videoWrapper.className = 'video-wrapper unfocused';
+    videoWrapper.style.position = 'relative';
+    videoWrapper.appendChild(video);
 
     const numberLabel = document.createElement('div');
     numberLabel.className = 'video-number';
     numberLabel.textContent = videoCount;
-    videoContainer.appendChild(numberLabel);
+    videoWrapper.appendChild(numberLabel);
     videoCount++;
 
     updateFocus(video);
@@ -181,7 +181,7 @@ function updateFocus(clickedVideo) {
     resetZoom();
     if (typeof clickedVideo === 'number') {
         const videoToFocus = videos.find((video, index) => 
-            video.closest('.video-container').querySelector('.video-number').textContent == clickedVideo
+            video.closest('.video-wrapper').querySelector('.video-number').textContent == clickedVideo
         );
         if (videoToFocus) {
             clickedVideo = videoToFocus;
@@ -194,19 +194,19 @@ function updateFocus(clickedVideo) {
     const unfocusedVideosContainer = document.querySelector('.unfocused-videos');
 
     videos.forEach(video => {
-        const videoContainer = video.closest('.video-container') || video.parentElement;
-        if (videoContainer.parentElement !== unfocusedVideosContainer) {
-            unfocusedVideosContainer.appendChild(videoContainer);
+        const videoWrapper = video.closest('.video-wrapper') || video.parentElement;
+        if (videoWrapper.parentElement !== unfocusedVideosContainer) {
+            unfocusedVideosContainer.appendChild(videoWrapper);
         }
-        videoContainer.classList.remove('focused');
-        videoContainer.classList.add('unfocused');
+        videoWrapper.classList.remove('focused');
+        videoWrapper.classList.add('unfocused');
     });
 
-    const clickedVideoContainer = clickedVideo.closest('.video-container') || clickedVideo.parentElement;
+    const clickedVideoWrapper = clickedVideo.closest('.video-wrapper') || clickedVideo.parentElement;
     focusedVideoContainer.innerHTML = '';
-    focusedVideoContainer.appendChild(clickedVideoContainer);
-    clickedVideoContainer.classList.remove('unfocused');
-    clickedVideoContainer.classList.add('focused');
+    focusedVideoContainer.appendChild(clickedVideoWrapper);
+    clickedVideoWrapper.classList.remove('unfocused');
+    clickedVideoWrapper.classList.add('focused');
 
     const volume = selectedVideo ? selectedVideo.volume : 0.5;
     resetVolumes();

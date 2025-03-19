@@ -108,13 +108,13 @@ function importVideos() {
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const videoURL = URL.createObjectURL(file);
-        addVideo(videoURL);
+        addVideo(videoURL, file.name);
     }
 
     removeHUDWelcome();
 }
 
-function addVideo(videoURL) {
+function addVideo(videoURL, videoName) {
     const video = document.createElement('video');
     video.src = videoURL;
     video.preload = 'auto';
@@ -124,6 +124,10 @@ function addVideo(videoURL) {
     videoWrapper.className = 'video-wrapper unfocused';
     videoWrapper.style.position = 'relative';
     videoWrapper.appendChild(video);
+
+    const label = document.createElement('small');
+    label.textContent = videoName;
+    videoWrapper.appendChild(label);
 
     const numberLabel = document.createElement('div');
     numberLabel.className = 'video-number';
@@ -244,6 +248,13 @@ function resetZoom () {
     }
 }
 
+function syncVideo () {
+    const container = document.querySelector('.focused');
+    const video = container.querySelector('video');
+
+    videos.forEach(v => v.currentTime = video.currentTime);
+}
+
 window.addEventListener('keydown', function(event) {
     if (event.code === 'Space') {
         event.preventDefault();
@@ -264,5 +275,7 @@ window.addEventListener('keydown', function(event) {
         drawingCanvas.toggleCanvas();
     } else if (event.code === 'KeyZ') {
         toggleZoom();
+    } else if (event.code === 'KeyS') {
+        syncVideo();
     }
 });

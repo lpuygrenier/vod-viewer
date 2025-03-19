@@ -9,8 +9,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="pico.slate.min.css">
+        <link rel="stylesheet" href="style.css">
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     </head>
     <body>
@@ -31,9 +31,8 @@
             <div class="video-layout hide">
                 <div class="focused-video">
                 </div>
-                <div class="unfocused-videos" >
+                <div class="unfocused-videos">
                 </div>
-  
             </div>
             <div class="custom-controls">
                 <div class="flex-column">
@@ -53,7 +52,6 @@
                         <fieldset role="group">
                             <input type="file" id="video-import" accept=".mkv,video/*" multiple>
                             <button onclick="importVideos()">Import</button>
-
                         </div>
                     </div>
                 </div>    
@@ -86,6 +84,7 @@
                 <ul>
                     <li>D Key: Toggles the drawing canvas, allowing users to sketch or annotate.</li>
                     <li>Z Key: Toggles zoom functionality on the focused video.</li>
+                    <li>S Key: Sync other videos to the focused video timeline.</li>
                 </ul>
               </p>
               <footer>

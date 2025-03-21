@@ -258,27 +258,24 @@ volumeControl.addEventListener("input", (event) => {
 
 function toggleZoom() {
   const zoom = document.querySelector("#zoom");
-  const container = document.querySelector(".focused");
-  const video = container.querySelector("video");
 
   let currentScale = parseFloat(
-    getComputedStyle(video).transform.split("(")[1]
+    getComputedStyle(cloneVideo).transform.split("(")[1]
   );
   const newScale = currentScale === 1 ? 2.3 : 1;
+
+  // update icon
   zoom.innerHTML = currentScale === 1 ? "zoom_out" : "zoom_in";
-  video.style.transformOrigin = "left top";
-  video.style.transform = `scale(${newScale})`;
+
+  cloneVideo.style.transformOrigin = "left top";
+  cloneVideo.style.transform = `scale(${newScale})`;
 }
 
 function resetZoom() {
-  const container = document.querySelector(".focused");
-  if (null != container) {
-    const video = container.querySelector("video");
-    if (null != video) {
-      video.style.transformOrigin = "left top";
-      video.style.transform = `scale(1)`;
-    }
-  }
+  cloneVideo.style.transformOrigin = "left top";
+    cloneVideo.style.transform = `scale(1)`;
+    
+  // Update icon
   const zoom = document.querySelector("#zoom");
   zoom.innerHTML = "zoom_in";
 }

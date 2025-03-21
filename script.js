@@ -5,6 +5,7 @@ let videoCount = 1;
 const volumeControl = document.getElementById("volume-control");
 const timeline = document.getElementById("timeline");
 const cloneVideo = document.getElementById('cloneVideo');
+const INITIAL_VOLUME = 0.5;
 
 class DrawingCanvas {
   constructor() {
@@ -130,12 +131,15 @@ function addVideo(videoURL, videoName) {
   video.src = videoURL;
   video.preload = "auto";
   video.controls = false;
+  video.volume = 0;
 
-  
   if (!cloneVideo.srcObject) {
     const stream = video.captureStream();
     cloneVideo.srcObject = stream;
     cloneVideo.play();
+    cloneVideo.muted = true;
+    selectedVideo = video;
+    video.volume = INITIAL_VOLUME;
   }
 
   const videoWrapper = document.createElement("div");
@@ -238,32 +242,13 @@ function updateFocus(clickedVideo) {
   cloneVideo.currentTime = clickedVideo.currentTime;
   cloneVideo[clickedVideo.paused ? 'pause' : 'play']();
 
-  // const focusedVideoContainer = document.querySelector(".focused-video");
-  // const unfocusedVideosContainer = document.querySelector(".unfocused-videos");
-
-  // console.log(videos);
-  // videos.forEach((item) => {
-  //   const videoWrapper = item.video.closest(".video-wrapper") || item.video.parentElement;
-  //   if (videoWrapper.parentElement !== unfocusedVideosContainer) {
-  //     unfocusedVideosContainer.appendChild(videoWrapper);
-  //   }
-  //   videoWrapper.classList.remove("focused");
-  //   videoWrapper.classList.add("unfocused");
-  // });
-
-  // const clickedVideoWrapper =
-  //   clickedVideo.closest(".video-wrapper") || clickedVideo.parentElement;
-  // focusedVideoContainer.innerHTML = "";
-  // focusedVideoContainer.appendChild(clickedVideoWrapper);
-  // clickedVideoWrapper.classList.remove("unfocused");
-  // clickedVideoWrapper.classList.add("focused");
-
-  // const volume = selectedVideo ? selectedVideo.volume : 0.5;
-  // resetVolumes();
-  // selectedVideo = clickedVideo;
-  // selectedVideo.volume = volume;
-  // volumeControl.value = volume;
+  const volume = selectedVideo ? selectedVideo.volume : 0.5;
+  resetVolumes();
+  selectedVideo = clickedVideo;
+  selectedVideo.volume = volume;
+  volumeControl.value = volume;
 }
+
 volumeControl.addEventListener("input", (event) => {
   if (selectedVideo) {
     selectedVideo.volume = parseFloat(event.target.value);

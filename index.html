@@ -29,6 +29,7 @@
       <p>Import a video to start watching !</p>
       <button data-target="modal-upload" onclick="toggleModal(event)"><span
           class="material-symbols-outlined">upload</span> Import videos</button>
+
     </div>
     <div class="video-layout hide">
       <article id="sidebar">
@@ -44,9 +45,9 @@
         <button class="control contrast" data-target="modal-example" onclick="toggleModal(event)"><span class="material-symbols-outlined">help</span></button>
       </article>
       <div style="display: flex; flex-direction: column; flex: 450%">
-        <div class="focused-video" style="min-height: 29em;">
+        <div class="focused-video">
           <div class="video-wrapper">
-            <video id="cloneVideo"></video>
+          <video id="cloneVideo"></video>
           </div>
         </div>
         <div class="custom-controls">

@@ -5,10 +5,11 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  overflow: hidden;
 }
 .main {
-    margin-left: 2rem;
-    margin-right: 2rem;
+    margin-left: 5rem;
+    margin-right: 5rem;
 }
 .container {
   display: flex;

@@ -165,6 +165,9 @@ function addVideo(videoURL, videoName) {
     delay: 0
   });
 
+  video.dataset.videoCount = videoCount;
+  video.dataset.delay = 0;
+
   videoCount++;
 
 
@@ -280,12 +283,74 @@ function resetZoom() {
 }
 
 function syncVideo() {
-  const container = document.querySelector(".focused");
-  const video = container.querySelector("video");
-
-  videos.forEach((item) => (item.video.currentTime = video.currentTime));
+  const videosElements = document.querySelectorAll('.unfocused.video-wrapper video');
+  videosElements.forEach((video) => {
+      const delay = parseInt(video.dataset.delay);
+      video.currentTime = selectedVideo.currentTime + delay;
+    }
+  );
 }
 
+function addSyncInput(videoWrapper) {
+  const delayInput = document.createElement('input');
+  delayInput.type = 'number';
+  delayInput.name = 'delay';
+  delayInput.placeholder = 'Delay (s)';
+  delayInput.setAttribute('aria-label', 'Delay (s)');
+
+  if (videoWrapper.querySelector('video').dataset.delay !== '0') {
+    delayInput.value = parseInt(videoWrapper.querySelector('video').dataset.delay)
+  }
+
+  const syncInputBgDiv = document.createElement('div');
+  syncInputBgDiv.classList.add('sync-input-bg');
+
+  const videoElement = videoWrapper.querySelector('video');
+
+  videoWrapper.insertBefore(delayInput, videoElement);
+  videoWrapper.insertBefore(syncInputBgDiv, videoElement);
+
+  delayInput.addEventListener('input', function(event) {
+    handleDelayChange(event, videoElement);
+  });
+
+  delayInput.addEventListener('change', function(event) {
+    handleDelayChange(event, videoElement);
+  });
+}
+
+function removeSyncInput(videoWrapper) {
+  const delayInput = videoWrapper.querySelector('input[name="delay"]');
+  const syncBgDiv = videoWrapper.querySelector('.sync-input-bg');
+  
+  if (delayInput && syncBgDiv) {
+    videoWrapper.removeChild(delayInput);
+    videoWrapper.removeChild(syncBgDiv);
+  }
+}
+
+function handleDelayChange (event, videoElement) {
+  const delayValue = parseInt(event.target.value);
+  videoElement.dataset.delay = delayValue;
+  syncVideo();
+}
+
+function toggleSync() {
+  const videoWrappers = document.querySelectorAll('.unfocused.video-wrapper');
+  
+  const hasExistingInputs = Array.from(videoWrappers).some(
+      wrapper => wrapper.querySelector('input[name="delay"]')
+  );
+  
+  if (hasExistingInputs) {
+      videoWrappers.forEach(videoWrapper => { removeSyncInput(videoWrapper)});
+  } else {
+      videoWrappers.forEach(videoWrapper => addSyncInput(videoWrapper));
+  }
+
+  const syncIcon = document.querySelector("#sync-mode");
+  syncIcon.classList.toggle("contrast");
+}
 window.addEventListener("keydown", function (event) {
   if (event.code === "Space") {
     event.preventDefault();

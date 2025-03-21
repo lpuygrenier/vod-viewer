@@ -39,12 +39,12 @@
           <button class="control" id="edit" onclick="drawingCanvas.toggleCanvas()"><span
               class="material-symbols-outlined">edit</span></button>
           <button class="control" onclick="toggleZoom()"><span class="material-symbols-outlined" id="zoom">zoom_in</span></button>
-          <button class="control" onclick=""><span class="material-symbols-outlined">sync_alt</span></button>
+          <button class="control" id="sync-mode" onclick="toggleSync()"><span class="material-symbols-outlined">sync_alt</span></button>
           <button class="control" onclick=""><span class="material-symbols-outlined">group</span></button>
         </div>
         <button class="control contrast" data-target="modal-example" onclick="toggleModal(event)"><span class="material-symbols-outlined">help</span></button>
       </article>
-      <div style="display: flex; flex-direction: column; flex: 450%">
+      <div style="display: flex; flex-direction: column; flex: 400%">
         <div class="focused-video">
           <div class="video-wrapper">
           <video id="cloneVideo"></video>

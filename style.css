@@ -163,3 +163,21 @@ button.control {
 #sidebar > div {
   gap: 8px;
 }
+
+.sync-input-bg {
+  background-color: rgb(0,0,0,0.9);
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: block;
+  position: absolute;
+}
+
+.video-wrapper > input {
+  position: absolute;
+  z-index: 2;
+  width: unset;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

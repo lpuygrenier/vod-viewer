@@ -16,7 +16,7 @@ class DrawingCanvas {
 
     this.setupCanvas();
     this.bindEvents();
-    this.toggleCanvas();
+    this.hideCanvas();
   }
 
   setupCanvas() {
@@ -34,8 +34,6 @@ class DrawingCanvas {
   }
 
   bindEvents() {
-    // Toggle canvas visibility with 'd' key
-
     // Drawing events
     this.canvas.addEventListener("mousedown", (e) => {
       this.startDrawing(e);
@@ -58,6 +56,15 @@ class DrawingCanvas {
     if (!isVisible) {
       this.setupCanvas();
     }
+
+    // Update edit icon
+    const edit_icon = document.querySelector("#edit");
+    edit_icon.classList.toggle("contrast");
+  }
+
+  hideCanvas() {
+    this.canvas.style.display = "none";
+    this.visible = false;
   }
 
   startDrawing(e) {

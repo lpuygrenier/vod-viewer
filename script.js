@@ -178,6 +178,7 @@ function resetVolumes() {
 
 function updateFocus(clickedVideo) {
   resetZoom();
+
   if (typeof clickedVideo === "number") {
     const videoToFocus = videos.find(
       (video, index) =>
@@ -224,6 +225,7 @@ volumeControl.addEventListener("input", (event) => {
 });
 
 function toggleZoom() {
+  const zoom = document.querySelector("#zoom");
   const container = document.querySelector(".focused");
   const video = container.querySelector("video");
 
@@ -231,11 +233,8 @@ function toggleZoom() {
     getComputedStyle(video).transform.split("(")[1]
   );
   const newScale = currentScale === 1 ? 2.3 : 1;
-
-  console.log(currentScale);
-  console.log(newScale);
+  zoom.innerHTML = currentScale === 1 ? "zoom_out" : "zoom_in";
   video.style.transformOrigin = "left top";
-
   video.style.transform = `scale(${newScale})`;
 }
 
@@ -248,6 +247,8 @@ function resetZoom() {
       video.style.transform = `scale(1)`;
     }
   }
+  const zoom = document.querySelector("#zoom");
+  zoom.innerHTML = "zoom_in";
 }
 
 function syncVideo() {

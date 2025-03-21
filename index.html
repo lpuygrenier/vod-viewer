@@ -38,7 +38,7 @@
             class="material-symbols-outlined">upload</span></button>
           <button class="control" onclick="drawingCanvas.toggleCanvas()"><span
               class="material-symbols-outlined">edit</span></button>
-          <button class="control" onclick="toggleZoom()"><span class="material-symbols-outlined">zoom_in</span></button>
+          <button class="control" onclick="toggleZoom()"><span class="material-symbols-outlined" id="zoom">zoom_in</span></button>
           <button class="control" onclick=""><span class="material-symbols-outlined">sync_alt</span></button>
           <button class="control" onclick=""><span class="material-symbols-outlined">group</span></button>
         </div>
@@ -123,11 +123,11 @@
         <h4>Import your POV:</h4>
         <fieldset role="group">
           <input type="file" id="video-import" accept=".mkv,video/*" multiple>
-          <button onclick="importVideos()">Import</button>
+          <button data-target="modal-upload" onclick="importVideos();toggleModal(event)">Import</button>
         </fieldset>
         <footer>
           <button autofocus data-target="modal-upload" onclick="toggleModal(event)">
-            Got it
+            Cancel
           </button>
         </footer>
       </article>

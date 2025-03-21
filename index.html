@@ -17,8 +17,7 @@
   </head>
 <body>
   <canvas id="drawingCanvas"></canvas>
-  <div class="container">
-
+  <div class="main">
     <nav>
       <ul>
         <li>
@@ -44,8 +43,12 @@
         </div>
         <button class="control contrast" data-target="modal-example" onclick="toggleModal(event)"><span class="material-symbols-outlined">help</span></button>
       </article>
-      <div style="display: flex; flex-direction: column;">
-        <div class="focused-video"></div>
+      <div style="display: flex; flex-direction: column; flex: 450%">
+        <div class="focused-video" style="min-height: 29em;">
+          <div class="video-wrapper">
+            <video id="cloneVideo" id="zoom"></video>
+          </div>
+        </div>
         <div class="custom-controls">
 
           <div class="flex-column">
@@ -75,9 +78,6 @@
               </div>
             </div>
           </div>
-
-
-
         </div>
       </div>
       <div class="unfocused-videos"></div>

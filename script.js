@@ -4,6 +4,7 @@ let isLoading = false;
 let videoCount = 1;
 const volumeControl = document.getElementById("volume-control");
 const timeline = document.getElementById("timeline");
+const cloneVideo = document.getElementById('cloneVideo');
 
 class DrawingCanvas {
   constructor() {
@@ -114,7 +115,14 @@ function addVideo(videoURL, videoName) {
   const video = document.createElement("video");
   video.src = videoURL;
   video.preload = "auto";
-  video.controls = true;
+  video.controls = false;
+
+  
+  if (!cloneVideo.srcObject) {
+    const stream = video.captureStream();
+    cloneVideo.srcObject = stream;
+    cloneVideo.play();
+  }
 
   const videoWrapper = document.createElement("div");
   videoWrapper.className = "video-wrapper unfocused";
@@ -129,11 +137,18 @@ function addVideo(videoURL, videoName) {
   numberLabel.className = "video-number";
   numberLabel.textContent = videoCount;
   videoWrapper.appendChild(numberLabel);
+
+  const unfocused = document.querySelector(".unfocused-videos");
+  unfocused.appendChild(videoWrapper);
+
+  videos.push({
+    video: video,
+    videoCount: videoCount,
+    delay: 0
+  });
+
   videoCount++;
 
-  updateFocus(video);
-
-  videos.push(video);
 
   video.addEventListener("loadstart", () => {
     isLoading = true;
@@ -146,34 +161,48 @@ function addVideo(videoURL, videoName) {
 }
 
 function pauseOtherVideos(currentVideo) {
-  videos.forEach((video) => {
-    if (video !== currentVideo) {
-      video.pause();
+  videos.forEach((item) => {
+    if (item.video !== currentVideo) {
+      item.video.pause();
     }
   });
 }
 
 function togglePlay() {
-  const allPaused = videos.every((video) => video.paused);
-  videos.forEach((video) => (allPaused ? video.play() : video.pause()));
+  const allPaused = videos.every((item) => item.video.paused);
+
+  videos.forEach((item) => (allPaused ? item.video.play() : item.video.pause()));
+  if (allPaused) {
+    cloneVideo.play();
+  } else {
+    cloneVideo.pause();
+  }
+
 }
 
 function pauseAllVideos() {
-  videos.forEach((video) => video.pause());
+  videos.forEach((item) => item.video.pause());
+  cloneVideo.pause();
+}
+
+function playAllVideos() {
+  videos.forEach((item) => item.video.play());
+  cloneVideo.play();
 }
 
 function goBack(seconds) {
   pauseAllVideos();
-  videos.forEach((video) => (video.currentTime = video.currentTime - seconds));
+  videos.forEach((item) => (item.video.currentTime = item.video.currentTime - seconds));
 }
 
 function goForward(seconds) {
   pauseAllVideos();
-  videos.forEach((video) => (video.currentTime = video.currentTime + seconds));
+  videos.forEach((item) => (item.video.currentTime = item.video.currentTime + seconds));
 }
 
 function resetVolumes() {
-  videos.forEach((video) => (video.volume = 0));
+  videos.forEach((item) => (item.video.volume = 0));
+  cloneVideo.volume = 0;
 }
 
 function updateFocus(clickedVideo) {
@@ -181,43 +210,46 @@ function updateFocus(clickedVideo) {
 
   if (typeof clickedVideo === "number") {
     const videoToFocus = videos.find(
-      (video, index) =>
-        video.closest(".video-wrapper").querySelector(".video-number")
-          .textContent == clickedVideo
+      (item) => item.videoCount == clickedVideo
     );
     if (videoToFocus) {
-      clickedVideo = videoToFocus;
+      clickedVideo = videoToFocus.video;
     } else {
       return;
     }
   }
 
-  const focusedVideoContainer = document.querySelector(".focused-video");
-  const unfocusedVideosContainer = document.querySelector(".unfocused-videos");
+  const stream = clickedVideo.captureStream();
+  cloneVideo.srcObject = stream;
+  cloneVideo.currentTime = clickedVideo.currentTime;
+  cloneVideo[clickedVideo.paused ? 'pause' : 'play']();
 
-  videos.forEach((video) => {
-    const videoWrapper = video.closest(".video-wrapper") || video.parentElement;
-    if (videoWrapper.parentElement !== unfocusedVideosContainer) {
-      unfocusedVideosContainer.appendChild(videoWrapper);
-    }
-    videoWrapper.classList.remove("focused");
-    videoWrapper.classList.add("unfocused");
-  });
+  // const focusedVideoContainer = document.querySelector(".focused-video");
+  // const unfocusedVideosContainer = document.querySelector(".unfocused-videos");
 
-  const clickedVideoWrapper =
-    clickedVideo.closest(".video-wrapper") || clickedVideo.parentElement;
-  focusedVideoContainer.innerHTML = "";
-  focusedVideoContainer.appendChild(clickedVideoWrapper);
-  clickedVideoWrapper.classList.remove("unfocused");
-  clickedVideoWrapper.classList.add("focused");
+  // console.log(videos);
+  // videos.forEach((item) => {
+  //   const videoWrapper = item.video.closest(".video-wrapper") || item.video.parentElement;
+  //   if (videoWrapper.parentElement !== unfocusedVideosContainer) {
+  //     unfocusedVideosContainer.appendChild(videoWrapper);
+  //   }
+  //   videoWrapper.classList.remove("focused");
+  //   videoWrapper.classList.add("unfocused");
+  // });
 
-  const volume = selectedVideo ? selectedVideo.volume : 0.5;
-  resetVolumes();
-  selectedVideo = clickedVideo;
-  selectedVideo.volume = volume;
-  volumeControl.value = volume;
+  // const clickedVideoWrapper =
+  //   clickedVideo.closest(".video-wrapper") || clickedVideo.parentElement;
+  // focusedVideoContainer.innerHTML = "";
+  // focusedVideoContainer.appendChild(clickedVideoWrapper);
+  // clickedVideoWrapper.classList.remove("unfocused");
+  // clickedVideoWrapper.classList.add("focused");
+
+  // const volume = selectedVideo ? selectedVideo.volume : 0.5;
+  // resetVolumes();
+  // selectedVideo = clickedVideo;
+  // selectedVideo.volume = volume;
+  // volumeControl.value = volume;
 }
-
 volumeControl.addEventListener("input", (event) => {
   if (selectedVideo) {
     selectedVideo.volume = parseFloat(event.target.value);
@@ -255,7 +287,7 @@ function syncVideo() {
   const container = document.querySelector(".focused");
   const video = container.querySelector("video");
 
-  videos.forEach((v) => (v.currentTime = video.currentTime));
+  videos.forEach((item) => (item.video.currentTime = video.currentTime));
 }
 
 window.addEventListener("keydown", function (event) {

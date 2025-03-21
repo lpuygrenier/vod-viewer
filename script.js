@@ -60,6 +60,13 @@ class DrawingCanvas {
     // Update edit icon
     const edit_icon = document.querySelector("#edit");
     edit_icon.classList.toggle("contrast");
+
+    // update all buttons to put them disabled except edit button
+    const buttons = document.querySelectorAll("button:not(#edit)");
+    buttons.forEach(button => button.disabled = !button.disabled);
+
+    const inputs = document.querySelectorAll("input");
+    inputs.forEach(input => input.disabled = !input.disabled);
   }
 
   hideCanvas() {

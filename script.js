@@ -3,7 +3,7 @@ let videos = [];
 let isLoading = false;
 let videoCount = 1;
 const volumeControl = document.getElementById("volume-control");
-const timeline = document.getElementById("timeline");
+const timeline = document.getElementById("timeline-control");
 const cloneVideo = document.getElementById('cloneVideo');
 const INITIAL_VOLUME = 0.5;
 
@@ -377,4 +377,14 @@ window.addEventListener("keydown", function (event) {
   } else if (event.code === "KeyS") {
     syncVideo();
   }
+});
+
+cloneVideo.addEventListener('timeupdate', () => {
+  const progress = (selectedVideo.currentTime / selectedVideo.duration) * 100;
+  timeline.value = progress;
+});
+
+timeline.addEventListener('input', () => {
+  const time = (timeline.value / 100) * selectedVideo.duration;
+  selectedVideo.currentTime = time;
 });

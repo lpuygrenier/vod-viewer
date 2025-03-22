@@ -182,6 +182,7 @@ function addVideo(videoURL, videoName) {
   video.addEventListener("canplay", () => {
     isLoading = false;
   });
+
   video.addEventListener("click", (event) => {
     updateFocus(event.target);
   });
@@ -217,14 +218,41 @@ function playAllVideos() {
   cloneVideo.play();
 }
 
-function goBack(seconds) {
-  pauseAllVideos();
-  videos.forEach((item) => (item.video.currentTime = item.video.currentTime - seconds));
-}
+function seek(isForward, seconds) {
+  if (!Number.isFinite(seconds)) {
+      throw new Error('Seconds must be a valid number');
+  }
 
-function goForward(seconds) {
-  pauseAllVideos();
-  videos.forEach((item) => (item.video.currentTime = item.video.currentTime + seconds));
+  const wasPlaying = !cloneVideo.paused;
+  if (wasPlaying) {
+      pauseAllVideos();
+  }
+
+  const seekPromises = videos.map(video => {
+      return new Promise((resolve, reject) => {
+          video.video.addEventListener('seeked', () => resolve(), { once: true });
+          
+          try {
+              const newTime = isForward ? 
+                  Math.min(video.video.currentTime + seconds, video.video.duration) :
+                  Math.max(0, video.video.currentTime - seconds);
+              
+              video.video.currentTime = newTime;
+          } catch (error) {
+              reject(new Error(`Failed to seek video: ${error.message}`));
+          }
+      });
+  });
+
+  Promise.all(seekPromises)
+      .then(() => {
+          if (wasPlaying) {
+              playAllVideos();
+          }
+      })
+      .catch(error => {
+          console.error('Video seek failed:', error);
+      });
 }
 
 function resetVolumes() {
@@ -393,6 +421,7 @@ cloneVideo.addEventListener('timeupdate', () => {
 timeline.addEventListener('input', () => {
   const time = (timeline.value / 100) * selectedVideo.duration;
   selectedVideo.currentTime = time;
+  syncVideo();
 });
 
 const nameInputs = document.getElementById('nameInputs');

@@ -61,16 +61,16 @@
                 <button class="control" onclick="syncVideo()"><span class="material-symbols-outlined">sync</span></button>
               </div>
               <div>
-                <button class="control" onclick="goBack(60)"><span
+                <button class="control" onclick="seek(false, 60)"><span
                   class="material-symbols-outlined">fast_rewind</span></button>
-                <button class="control" onclick="goBack(10)"><span
+                <button class="control" onclick="seek(false, 10)"><span
                     class="material-symbols-outlined">fast_rewind</span></button>
                 <button class="control" onclick="togglePlay()">
                   <span class="material-symbols-outlined">play_pause</span>
                 </button>
-                <button class="control" onclick="goForward(10)"><span
+                <button class="control" onclick="seek(true, 10)"><span
                     class="material-symbols-outlined">fast_forward</span></button>
-                <button class="control" onclick="goForward(60)"><span
+                <button class="control" onclick="seek(true, 60)"><span
                     class="material-symbols-outlined">fast_forward</span></button>
               </div>
               <div>

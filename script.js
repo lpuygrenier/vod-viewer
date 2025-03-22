@@ -220,39 +220,39 @@ function playAllVideos() {
 
 function seek(isForward, seconds) {
   if (!Number.isFinite(seconds)) {
-      throw new Error('Seconds must be a valid number');
+    throw new Error('Seconds must be a valid number');
   }
 
   const wasPlaying = !cloneVideo.paused;
   if (wasPlaying) {
-      pauseAllVideos();
+    pauseAllVideos();
   }
 
   const seekPromises = videos.map(video => {
-      return new Promise((resolve, reject) => {
-          video.video.addEventListener('seeked', () => resolve(), { once: true });
-          
-          try {
-              const newTime = isForward ? 
-                  Math.min(video.video.currentTime + seconds, video.video.duration) :
-                  Math.max(0, video.video.currentTime - seconds);
-              
-              video.video.currentTime = newTime;
-          } catch (error) {
-              reject(new Error(`Failed to seek video: ${error.message}`));
-          }
-      });
+    return new Promise((resolve, reject) => {
+      video.video.addEventListener('seeked', () => resolve(), { once: true });
+
+      try {
+        const newTime = isForward ?
+          Math.min(video.video.currentTime + seconds, video.video.duration) :
+          Math.max(0, video.video.currentTime - seconds);
+
+        video.video.currentTime = newTime;
+      } catch (error) {
+        reject(new Error(`Failed to seek video: ${error.message}`));
+      }
+    });
   });
 
   Promise.all(seekPromises)
-      .then(() => {
-          if (wasPlaying) {
-              playAllVideos();
-          }
-      })
-      .catch(error => {
-          console.error('Video seek failed:', error);
-      });
+    .then(() => {
+      if (wasPlaying) {
+        playAllVideos();
+      }
+    })
+    .catch(error => {
+      console.error('Video seek failed:', error);
+    });
 }
 
 function resetVolumes() {
@@ -420,8 +420,24 @@ cloneVideo.addEventListener('timeupdate', () => {
 
 timeline.addEventListener('input', () => {
   const time = (timeline.value / 100) * selectedVideo.duration;
-  selectedVideo.currentTime = time;
-  syncVideo();
+
+  new Promise((resolve, reject) => {
+    selectedVideo.addEventListener('seeked', () => {
+      resolve();
+    }, { once: true });
+
+    try {
+      selectedVideo.currentTime = time;
+    } catch (error) {
+      reject(new Error(`Failed to seek video: ${error.message}`));
+    }
+  })
+    .then(() => {
+      return syncVideo();
+    })
+    .catch(error => {
+      console.error('Timeline seek failed:', error);
+    });
 });
 
 const nameInputs = document.getElementById('nameInputs');

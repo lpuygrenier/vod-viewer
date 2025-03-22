@@ -40,14 +40,15 @@
               class="material-symbols-outlined">edit</span></button>
           <button class="control" onclick="toggleZoom()"><span class="material-symbols-outlined" id="zoom">zoom_in</span></button>
           <button class="control" id="sync-mode" onclick="toggleSync()"><span class="material-symbols-outlined">sync_alt</span></button>
-          <button class="control" onclick=""><span class="material-symbols-outlined">group</span></button>
+          <button class="control" data-target="modal-team" onclick="toggleModal(event)"><span class="material-symbols-outlined">group</span></button>
         </div>
         <button class="control contrast" data-target="modal-example" onclick="toggleModal(event)"><span class="material-symbols-outlined">help</span></button>
       </article>
       <div style="display: flex; flex-direction: column; flex: 400%">
         <div class="focused-video">
           <div class="video-wrapper">
-          <video id="cloneVideo"></video>
+            <small></small>
+            <video id="cloneVideo"></video>
           </div>
         </div>
         <div class="custom-controls">
@@ -131,6 +132,20 @@
             Cancel
           </button>
         </footer>
+      </article>
+    </dialog>
+
+    <dialog id="modal-team">
+      <article>
+          <h2>Enter Names</h2>
+          <p>Videos with a matching name will display the player's name instead of the video name</p>
+          <div id="nameInputs"></div>
+          <button id="addName">Add Name</button>
+          <footer>
+            <button autofocus data-target="modal-team" onclick="toggleModal(event)">
+              Cancel
+            </button>
+          </footer>
       </article>
     </dialog>
     <script src="script.js"></script>

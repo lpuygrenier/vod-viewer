@@ -182,6 +182,9 @@ function addVideo(videoURL, videoName) {
   video.addEventListener("canplay", () => {
     isLoading = false;
   });
+  video.addEventListener("click", (event) => {
+    updateFocus(event.target);
+  });
 }
 
 function pauseOtherVideos(currentVideo) {
